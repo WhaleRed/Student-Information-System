@@ -1,10 +1,6 @@
 from tkinter import *
 import csv
 
-student_list = []
-program_list = []
-college_list = []
-
 student_path = "StudentData.csv"
 program_path = "ProgramData.csv"
 college_path = "CollegeData.csv"
@@ -24,61 +20,119 @@ def sort_college():
 def sort_age():
   print("Sorting by age")
 
-def submit_add():
-  print("Submitted the newly added student")
+def printing(list):
+  for field in list:
+    print(field)
 
-def add_student():
-  add_window = Toplevel()
-  add_window.title("Add Student")
-
-  Label(add_window, text="STUDENT", font=('Helvetica', 20)).grid(row=0, column=0, columnspan=2, pady=10)
-  Label(add_window, text="ID#: ", font=('Helvetica', 15)).grid(row=1, column=0, padx=10)
-  Entry(add_window,font=('Helvetica', 15)).grid(row=1, column=1, padx=10)
-  Label(add_window, text="First name: ", font=('Helvetica', 15)).grid(row=2, column=0,)
-  Entry(add_window,font=('Helvetica', 15)).grid(row=2, column=1,)
-  Label(add_window, text="Last name: ", font=('Helvetica', 15)).grid(row=3, column=0,)
-  Entry(add_window,font=('Helvetica', 15)).grid(row=3, column=1,)
-  Label(add_window, text="Year Level: ", font=('Helvetica', 15)).grid(row=4, column=0,)
-  Entry(add_window,font=('Helvetica', 15)).grid(row=4, column=1,)
-  Label(add_window, text="Gender: ", font=('Helvetica', 15)).grid(row=5, column=0,)
-  Entry(add_window,font=('Helvetica', 15)).grid(row=5, column=1,)
-  Label(add_window, text="Program Code: ", font=('Helvetica', 15)).grid(row=6, column=0,)
-  Entry(add_window,font=('Helvetica', 15)).grid(row=6, column=1,)
-
-  Label(add_window, text="PROGRAM", font=('Helvetica', 20)).grid(row=7, column=0, columnspan=2, pady=10)
-  Label(add_window, text="Program Code: ", font=('Helvetica', 15)).grid(row=8, column=0,)
-  Entry(add_window,font=('Helvetica', 15)).grid(row=8, column=1,)
-  Label(add_window, text="Name: ", font=('Helvetica', 15)).grid(row=9, column=0,)
-  Entry(add_window,font=('Helvetica', 15)).grid(row=9, column=1,)
-  Label(add_window, text="College: ", font=('Helvetica', 15)).grid(row=10, column=0,)
-  Entry(add_window,font=('Helvetica', 15)).grid(row=10, column=1,)
-
-  Label(add_window, text="College", font=('Helvetica', 20)).grid(row=11, column=0, columnspan=2, pady=10)
-  Label(add_window, text="Code: ", font=('Helvetica', 15)).grid(row=12, column=0,)
-  Entry(add_window,font=('Helvetica', 15)).grid(row=12, column=1,)
-  Label(add_window, text="Name: ", font=('Helvetica', 15)).grid(row=13, column=0,)
-  Entry(add_window,font=('Helvetica', 15)).grid(row=13, column=1,)
-
-  Button(add_window, text="Add Student", font=('Helvetica', 15), command=submit_add).grid(row=14, column=0, columnspan=2, pady=10)
-
-
-def delete_student():
-  print("Deleting student")
-
+student_new = []
+college_new = []
+program_new = []
 
 #Show list
 def show():
+  student_list.delete(0, END)
   with open(student_path, "r") as f:
     reader = csv.reader(f)
+    next(reader)
     for row in reader:
         student_list.insert("end", row)
 
-#Updates list for search
-def update(students):
-  for student in students:
-    student_list.insert(student)
+def add_student():
+  def submit():
+    #Adding row for Student CSV
+    student_new.append(id_entry.get())
+    student_new.append(fname_entry.get())
+    student_new.append(lname_entry.get())
+    student_new.append(ylvl_entry.get())
+    student_new.append(gender_entry.get())
+    student_new.append(pcode_entry.get())
+    with open(student_path, 'a', newline="") as f:
+      writer = csv.writer(f)
+      writer.writerow(student_new)
+    student_new.clear()   #Clear list
+
+    #Adding row for Program CSV
+    program_new.append(progcode_entry.get())
+    program_new.append(pname_entry.get())
+    program_new.append(ccode_entry.get())
+    with open(program_path, 'a', newline="") as f:
+      writer = csv.writer(f)
+      writer.writerow(program_new)
+    program_new.clear()   #Clear list
+
+    college_new.append(colcode_entry.get())
+    college_new.append(colname_entry.get())
+    with open(college_path, 'a', newline="") as f:
+      writer = csv.writer(f)
+      writer.writerow(college_new)
+    college_new.clear()   #Clear list
+
+    show()
+
+  add_window = Toplevel()
+  add_window.title("Add Student")
+
+  add_frame = Frame(add_window)
+  add_frame.grid(row=0, column=0,)
+
+  Label(add_frame, text="Student", font=('Helvetica', 20)).grid(row=0, column=0, columnspan=3, padx=10, pady=10)
+  
+  Label(add_frame, text="ID#:", font=('Helvetica', 15)).grid(row=1, column=0, padx=10)
+  id_entry = Entry(add_frame, font=('Helvetica', 15))
+  id_entry.grid(row=1, column=1, padx=10, columnspan=2)
+
+  Label(add_frame, text="First name:", font=('Helvetica', 15)).grid(row=2, column=0, padx=10)
+  fname_entry = Entry(add_frame, font=('Helvetica', 15))
+  fname_entry.grid(row=2, column=1, padx=10, columnspan=2)
+
+  Label(add_frame, text="Last name:", font=('Helvetica', 15)).grid(row=3, column=0, padx=10)
+  lname_entry = Entry(add_frame, font=('Helvetica', 15))
+  lname_entry.grid(row=3, column=1, padx=10, columnspan=2)
+
+  Label(add_frame, text="Year level:", font=('Helvetica', 15)).grid(row=4, column=0, padx=10)
+  ylvl_entry = Entry(add_frame, font=('Helvetica', 15))
+  ylvl_entry.grid(row=4, column=1, padx=10, columnspan=2)
+
+  Label(add_frame, text="Gender:", font=('Helvetica', 15)).grid(row=5, column=0, padx=10)
+  gender_entry = Entry(add_frame, font=('Helvetica', 15))
+  gender_entry.grid(row=5, column=1, padx=10, columnspan=2)
+
+  Label(add_frame, text="Program code:", font=('Helvetica', 15)).grid(row=6, column=0, padx=10)
+  pcode_entry = Entry(add_frame, font=('Helvetica', 15))
+  pcode_entry.grid(row=6, column=1, padx=10, columnspan=2)
+
+  Label(add_frame, text="Program", font=('Helvetica', 20)).grid(row=7, column=0, columnspan=3, padx=10, pady=10)
+  
+  Label(add_frame, text="Program code:", font=('Helvetica', 15)).grid(row=8, column=0, padx=10)
+  progcode_entry = Entry(add_frame, font=('Helvetica', 15))
+  progcode_entry.grid(row=8, column=1, padx=10, columnspan=2)
+
+  Label(add_frame, text="Program name:", font=('Helvetica', 15)).grid(row=9, column=0, padx=10)
+  pname_entry = Entry(add_frame, font=('Helvetica', 15))
+  pname_entry.grid(row=9, column=1, padx=10, columnspan=2)
+
+  Label(add_frame, text="College code:", font=('Helvetica', 15)).grid(row=10, column=0, padx=10)
+  ccode_entry = Entry(add_frame, font=('Helvetica', 15))
+  ccode_entry.grid(row=10, column=1, padx=10, columnspan=2)
+
+  Label(add_frame, text="College", font=('Helvetica', 20)).grid(row=11, column=0, columnspan=3, padx=10, pady=10)
+
+  Label(add_frame, text="College code:", font=('Helvetica', 15)).grid(row=12, column=0, padx=10)
+  colcode_entry = Entry(add_frame, font=('Helvetica', 15))
+  colcode_entry.grid(row=12, column=1, padx=10, columnspan=2)
+
+  Label(add_frame, text="College name:", font=('Helvetica', 15)).grid(row=13, column=0, padx=10)
+  colname_entry = Entry(add_frame, font=('Helvetica', 15))
+  colname_entry.grid(row=13, column=1, padx=10, columnspan=2)
+
+  submit_button = Button(add_frame, text="Submit", font=('Helvetica', 15), command=submit)
+  submit_button.grid(row=14, column=0, columnspan=3, pady=10)
+
 
     
+def delete_student():
+  print("Deleting student")
+  
 
 #Checks if searched is on the list and updates the list
 #def search(event):
@@ -118,7 +172,8 @@ del_button.pack(side=LEFT)
 sort_label = Label(menu_frame, text="      Sort by: ")
 sort_label.pack(side=LEFT)
 
-#Sort by buttons
+#Sort by buttons Should be changed to Menubar for cascade
+Button(menu_frame, text="None", command=show).pack(side=LEFT)
 Button(menu_frame, text="Year Level", command=sort_year_level).pack(side=LEFT)
 Button(menu_frame, text="Gender", command=sort_gender).pack(side=LEFT)
 Button(menu_frame, text="Program", command=sort_program).pack(side=LEFT)
