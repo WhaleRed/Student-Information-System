@@ -5,15 +5,20 @@ student_path = "StudentData.csv"
 program_path = "ProgramData.csv"
 college_path = "CollegeData.csv"
 
-#Array for the rows to be kept when deleting a student
+#For the rows to be kept when deleting a student
 student_keep = []
 college_keep = []
 program_keep = []
 
-#Array for adding new student
+#For adding new student
 student_new = []
 college_new = []
 program_new = []
+
+#For editing student
+student_edit = []
+college_edit = []
+program_edit = []
 
 def sort_year_level():
   print("Sorting by Year level")
@@ -193,6 +198,11 @@ def delete_student():
       for row in program_keep:
         writer.writerow(row)
     
+    #clear for no duplicates
+    student_keep.clear()
+    college_keep.clear()
+    program_keep.clear()
+
     show()   #Relist
 
   def clear_text(e):
@@ -215,6 +225,205 @@ def delete_student():
 
   #I have to add verify there is an input
 
+def edit_student():
+
+  def submit_edit():
+    student_e = []
+    program_e = []
+    college_e = []
+
+    count = 0
+
+    #Apendiing row for Student CSV
+    student_e.append(id_entry.get())
+    student_e.append(fname_entry.get())
+    student_e.append(lname_entry.get())
+    student_e.append(ylvl_entry.get())
+    student_e.append(gender_entry.get())
+    student_e.append(pcode_entry.get())
+
+    #Apendiing row for Program CSV
+    program_e.append(progcode_entry.get())
+    program_e.append(pname_entry.get())
+    program_e.append(ccode_entry.get())
+
+
+    #Apending row for College csv
+    college_e.append(colcode_entry.get())
+    college_e.append(colname_entry.get())
+
+    #Reading for insert
+    with open(student_path, "r") as f:
+      reader = csv.reader(f)
+      for row in reader:
+        if editing == count:
+          student_edit.append(student_e)
+          count += 1
+        else:
+          student_edit.append(row)
+          count += 1
+
+    count = 0
+
+    with open(college_path, "r") as f:
+      reader = csv.reader(f)
+      for row in reader:
+        if editing == count:
+          college_edit.append(college_e)
+          count += 1
+        else:
+          college_edit.append(row)
+          count += 1
+
+    count = 0
+
+    with open(program_path, "r") as f:
+      reader = csv.reader(f)
+      for row in reader:
+        if editing == count:
+          program_edit.append(program_e)
+          count += 1
+        else:
+          program_edit.append(row)
+          count += 1
+
+    count = 0
+
+    #Write back
+    with open(student_path, "w", newline="") as f:
+      writer = csv.writer(f)
+      for row in student_edit:
+        writer.writerow(row)
+
+    with open(college_path, "w", newline="") as f:
+      writer = csv.writer(f)
+      for row in college_edit:
+        writer.writerow(row)
+
+    with open(program_path, "w", newline="") as f:
+      writer = csv.writer(f)
+      for row in program_edit:
+        writer.writerow(row)
+    
+    #clear
+    student_edit.clear()
+    college_edit.clear()
+    program_edit.clear()
+
+    student_e.clear()
+    college_e.clear()
+    program_e.clear()
+
+    show()
+
+  editing = 0
+  count = 0
+  for student in student_list.curselection():     #For reference which student user is editing
+    editing = student+1
+  
+  #Read first
+  with open(student_path, "r") as f:
+    reader = csv.reader(f)
+    for row in reader:
+      if count == editing:
+        student_edit.append(row)
+      count += 1
+  
+  count = 0
+
+  with open(college_path, "r") as f:
+    reader = csv.reader(f)
+    for row in reader:
+      if count == editing:
+        college_edit.append(row)
+      count += 1
+  
+    count = 0
+
+  with open(program_path, "r") as f:
+    reader = csv.reader(f)
+    for row in reader:
+      if count == editing:
+        program_edit.append(row)
+      count += 1
+  
+  count = 0
+
+  edit_window = Toplevel()
+  edit_window.title("Editing Student")
+
+  edit_frame = Frame(edit_window)
+  edit_frame.grid(row=0, column=0,)
+
+  Label(edit_frame, text="Student", font=('Helvetica', 20)).grid(row=0, column=0, columnspan=3, padx=10, pady=10)
+  
+  Label(edit_frame, text="ID#:", font=('Helvetica', 15)).grid(row=1, column=0, padx=10)
+  id_entry = Entry(edit_frame, font=('Helvetica', 15))
+  id_entry.grid(row=1, column=1, padx=10, columnspan=2)
+  id_entry.insert(0, student_edit[0][0])
+
+  Label(edit_frame, text="First name:", font=('Helvetica', 15)).grid(row=2, column=0, padx=10)
+  fname_entry = Entry(edit_frame, font=('Helvetica', 15))
+  fname_entry.grid(row=2, column=1, padx=10, columnspan=2)
+  fname_entry.insert(0, student_edit[0][1])
+
+  Label(edit_frame, text="Last name:", font=('Helvetica', 15)).grid(row=3, column=0, padx=10)
+  lname_entry = Entry(edit_frame, font=('Helvetica', 15))
+  lname_entry.grid(row=3, column=1, padx=10, columnspan=2)
+  lname_entry.insert(0, student_edit[0][2])
+
+  Label(edit_frame, text="Year level:", font=('Helvetica', 15)).grid(row=4, column=0, padx=10)
+  ylvl_entry = Entry(edit_frame, font=('Helvetica', 15))
+  ylvl_entry.grid(row=4, column=1, padx=10, columnspan=2)
+  ylvl_entry.insert(0, student_edit[0][3])
+
+  Label(edit_frame, text="Gender:", font=('Helvetica', 15)).grid(row=5, column=0, padx=10)
+  gender_entry = Entry(edit_frame, font=('Helvetica', 15))
+  gender_entry.grid(row=5, column=1, padx=10, columnspan=2)
+  gender_entry.insert(0, student_edit[0][4])
+
+  Label(edit_frame, text="Program code:", font=('Helvetica', 15)).grid(row=6, column=0, padx=10)
+  pcode_entry = Entry(edit_frame, font=('Helvetica', 15))
+  pcode_entry.grid(row=6, column=1, padx=10, columnspan=2)
+  pcode_entry.insert(0, student_edit[0][5])
+
+  Label(edit_frame, text="Program", font=('Helvetica', 20)).grid(row=7, column=0, columnspan=3, padx=10, pady=10)
+  
+  Label(edit_frame, text="Program code:", font=('Helvetica', 15)).grid(row=8, column=0, padx=10)
+  progcode_entry = Entry(edit_frame, font=('Helvetica', 15))
+  progcode_entry.grid(row=8, column=1, padx=10, columnspan=2)
+  progcode_entry.insert(0, program_edit[0][0])
+
+  Label(edit_frame, text="Program name:", font=('Helvetica', 15)).grid(row=9, column=0, padx=10)
+  pname_entry = Entry(edit_frame, font=('Helvetica', 15))
+  pname_entry.grid(row=9, column=1, padx=10, columnspan=2)
+  pname_entry.insert(0, program_edit[0][1])
+
+  Label(edit_frame, text="College code:", font=('Helvetica', 15)).grid(row=10, column=0, padx=10)
+  ccode_entry = Entry(edit_frame, font=('Helvetica', 15))
+  ccode_entry.grid(row=10, column=1, padx=10, columnspan=2)
+  ccode_entry.insert(0, program_edit[0][2])
+
+  Label(edit_frame, text="College", font=('Helvetica', 20)).grid(row=11, column=0, columnspan=3, padx=10, pady=10)
+
+  Label(edit_frame, text="College code:", font=('Helvetica', 15)).grid(row=12, column=0, padx=10)
+  colcode_entry = Entry(edit_frame, font=('Helvetica', 15))
+  colcode_entry.grid(row=12, column=1, padx=10, columnspan=2)
+  colcode_entry.insert(0, college_edit[0][0])
+
+  Label(edit_frame, text="College name:", font=('Helvetica', 15)).grid(row=13, column=0, padx=10)
+  colname_entry = Entry(edit_frame, font=('Helvetica', 15))
+  colname_entry.grid(row=13, column=1, padx=10, columnspan=2)
+  colname_entry.insert(0, college_edit[0][1])
+
+  #Clear
+  student_edit.clear()
+  program_edit.clear()
+  college_edit.clear()
+
+  submit_button = Button(edit_frame, text="Submit", font=('Helvetica', 15), command=submit_edit)
+  submit_button.grid(row=14, column=0, columnspan=3, pady=10)
+
   
 
 #Checks if searched is on the list and updates the list
@@ -236,33 +445,35 @@ main_window = Tk()
 main_window.title("Student Information System")
 main_window.geometry("1024x768")
 
-#for sort
-menu_frame = Frame(main_window)
-menu_frame.place(x=0, y=0)
-menu_frame.config(padx=20, pady=10)
+
+menubar = Menu(main_window)
+main_window.config(menu=menubar)
+
+#Menu for Managing student
+manage_menu = Menu(menubar, tearoff=0, font=("Helvetica", 11))
+menubar.add_cascade(label="Manage Student", menu=manage_menu)
+manage_menu.add_command(label="Add Student", command=add_student)
+manage_menu.add_command(label="Delete Student", command=delete_student)
+manage_menu.add_command(label="Edit Student", command=edit_student)     #Have to make function
+
+sort_menu = Menu(menubar, tearoff=0, font=("Helvetica", 11))
+menubar.add_cascade(label="Sort Students", menu=sort_menu)
+sort_menu.add_command(label="Year Level", command=sort_year_level)
+sort_menu.add_command(label="Gender", command=sort_gender)
+sort_menu.add_command(label="Program", command=sort_program)
+sort_menu.add_command(label="College", command=sort_college)
+sort_menu.add_command(label="Age", command=sort_age)
+
+view_menu = Menu(menubar, tearoff=0, font=("Helvetica", 11))
+menubar.add_cascade(label="View", menu=view_menu)
+view_menu.add_command(label="Student")
+view_menu.add_command(label="Program")
+view_menu.add_command(label="College")
 
 #for search box
 search_frame = Frame(main_window)
-search_frame.pack(side=TOP, anchor=NE, padx=20, pady=10)
+search_frame.pack(side=TOP, padx=20, pady=10)
 
-
-add_button = Button(menu_frame, text="Add Student", command=add_student)
-add_button.pack(side=LEFT)
-
-del_button = Button(menu_frame, text="Delete Student", command=delete_student)
-del_button.pack(side=LEFT)
-
-sort_label = Label(menu_frame, text="      Sort by: ")
-sort_label.pack(side=LEFT)
-
-
-#Sort by buttons Should be changed to Menubar for cascade
-Button(menu_frame, text="None", command=show).pack(side=LEFT)
-Button(menu_frame, text="Year Level", command=sort_year_level).pack(side=LEFT)
-Button(menu_frame, text="Gender", command=sort_gender).pack(side=LEFT)
-Button(menu_frame, text="Program", command=sort_program).pack(side=LEFT)
-Button(menu_frame, text="College", command=sort_college).pack(side=LEFT)
-Button(menu_frame, text="Age", command=sort_age).pack(side=LEFT)
 
 search_box = Entry(search_frame, font=('Helvetica', 15))
 search_box.pack(side=RIGHT)
@@ -271,7 +482,7 @@ search_box.pack(side=RIGHT)
 Label(search_frame, text="Search by ID#").pack(side=RIGHT)
 
 student_list = Listbox(main_window, width=300, height=300, font=("Helvetica", 15))
-student_list.pack(pady=50, padx=20)
+student_list.pack(pady=30, padx=20)
 
 show()
 
