@@ -1,4 +1,5 @@
 from tkinter import *
+from tkinter import ttk
 import csv
 
 student_path = "StudentData.csv"
@@ -21,23 +22,81 @@ college_edit = []
 program_edit = []
 
 def sort_year_level():
-  print("Sorting by Year level")
+
+  def sub_year():
+    year = drop_year.get()
+    student_list.delete(0, END)
+    with open(student_path, "r") as f:
+      reader = csv.reader(f)
+      for row in reader:
+        if row[3] == year:
+          student_list.insert("end", row[0] + "   " + row[1] + " " + row[2])
+
+  sort_window = Toplevel()
+  sort_window.title("Sorting by Year level")
+  sort_window.geometry("300x200")
+  Label(sort_window,  text="Year level", font=("Helvetica", 12)).pack()
+  choices = ["1", "2", "3", "4"]
+  drop_year = ttk.Combobox(sort_window, text="None", values=choices, font=("Helvetica", 12))
+  drop_year.pack()
+  submit = Button(sort_window, text="Sort", command=sub_year)
+  submit.pack()
 
 def sort_gender():
-  print("Sorting by gender")
 
-def sort_program():
-  print("Sorting by program")
+  def sub_gender():
+    gender = drop_gender.get()
+    student_list.delete(0, END)
+    with open(student_path, "r") as f:
+      reader = csv.reader(f)
+      for row in reader:
+        if row[4] == gender:
+          student_list.insert("end", row[0] + "   " + row[1] + " " + row[2])
 
+  sort_window = Toplevel()
+  sort_window.title("Sorting Gender")
+  sort_window.geometry("300x200")
+  Label(sort_window,  text="Gender", font=("Helvetica", 12)).pack()
+  choices = ["Female", "Male"]
+  drop_gender = ttk.Combobox(sort_window, text="None", values=choices, font=("Helvetica", 12))
+  drop_gender.pack()
+  submit = Button(sort_window, text="Sort", command=sub_gender)
+  submit.pack()
+  
 def sort_college():
-  print("Sorting by college")
 
-def sort_age():
-  print("Sorting by age")
+  def sub_college():
+    college_index = []
+    count = 0
+    collegecode = drop_college.get()
+    student_list.delete(0, END)
+    with open(college_path, "r") as f:      #For determining what we will keep
+      reader = csv.reader(f)
+      for row in reader:
+        if row[0] == collegecode:
+          college_index.append(count)
+        count += 1
 
-def printing(list):
-  for field in list:
-    print(field)
+    count = 0
+
+    with open(student_path, "r") as f:
+      reader = csv.reader(f)
+      for row in reader:                    #For showing kept
+        if count in college_index:
+          student_list.insert("end", row[0] + "   " + row[1] + " " + row[2])
+        count += 1
+    
+    count = 0
+
+  sort_window = Toplevel()
+  sort_window.title("Sorting College")
+  sort_window.geometry("300x200")
+  Label(sort_window,  text="College", font=("Helvetica", 12)).pack()
+  choices = ["CASS", "CCS", "CSM", "CEBA", "CED", "CHS", "COE"]
+  drop_college = ttk.Combobox(sort_window, text="None", values=choices, font=("Helvetica", 12))
+  drop_college.pack()
+  submit = Button(sort_window, text="Sort", command=sub_college)
+  submit.pack() 
 
 #Show list
 def show():
@@ -46,7 +105,7 @@ def show():
     reader = csv.reader(f)
     next(reader)
     for row in reader:
-        student_list.insert("end", row)
+        student_list.insert("end", row[0] + "   " + row[1] + " " + row[2])
 
 def add_student():
   def submit():
@@ -427,18 +486,26 @@ def edit_student():
   
 
 #Checks if searched is on the list and updates the list
-#def search(event):
-# searched = search_box.get()
-# with open(student_path, "r") as f:
-#   reader = csv.reader(f)
-# if searched == '':
-#    student = reader
-# else:
-#    student = []
-#    for item in reader:
-#      if searched.lower() in item.lower():
-#        student.append(item)
-# update(student)
+def search(event):
+
+  def update(students):
+    student_list.delete(0, END)
+    for student in students:
+      student_list.insert("end", student)
+  
+  searched = search_box.get()
+
+  with open(student_path, "r") as f:
+    reader = csv.reader(f)
+    if searched == '':
+      show()
+    else:
+      student = []
+      for row in reader:
+        if searched in row[0]:
+          student.append(row)
+
+    update(student)
 
 main_window = Tk()
 
@@ -458,11 +525,10 @@ manage_menu.add_command(label="Edit Student", command=edit_student)     #Have to
 
 sort_menu = Menu(menubar, tearoff=0, font=("Helvetica", 11))
 menubar.add_cascade(label="Sort Students", menu=sort_menu)
+sort_menu.add_command(label="None", command=show)
 sort_menu.add_command(label="Year Level", command=sort_year_level)
 sort_menu.add_command(label="Gender", command=sort_gender)
-sort_menu.add_command(label="Program", command=sort_program)
 sort_menu.add_command(label="College", command=sort_college)
-sort_menu.add_command(label="Age", command=sort_age)
 
 view_menu = Menu(menubar, tearoff=0, font=("Helvetica", 11))
 menubar.add_cascade(label="View", menu=view_menu)
@@ -486,7 +552,7 @@ student_list.pack(pady=30, padx=20)
 
 show()
 
-#search_box.bind("<KeyRelease>", search)
+search_box.bind("<KeyRelease>", search)
 
 
 main_window.mainloop()
