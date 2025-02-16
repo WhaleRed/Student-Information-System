@@ -26,11 +26,12 @@ def sort_year_level():
   def sub_year():
     year = drop_year.get()
     student_list.delete(0, END)
+    row_num = 1
     with open(student_path, "r") as f:
       reader = csv.reader(f)
       for row in reader:
         if row[3] == year:
-          student_list.insert("end", row[0] + "   " + row[1] + " " + row[2])
+          student_list.insert("end",str(row_num) + ")    " + row[0] + "   " + row[1] + " " + row[2])
 
   sort_window = Toplevel()
   sort_window.title("Sorting by Year level")
@@ -47,11 +48,12 @@ def sort_gender():
   def sub_gender():
     gender = drop_gender.get()
     student_list.delete(0, END)
+    row_num = 1
     with open(student_path, "r") as f:
       reader = csv.reader(f)
       for row in reader:
         if row[4] == gender:
-          student_list.insert("end", row[0] + "   " + row[1] + " " + row[2])
+          student_list.insert("end",str(row_num) + ")    " + row[0] + "   " + row[1] + " " + row[2])
 
   sort_window = Toplevel()
   sort_window.title("Sorting Gender")
@@ -70,6 +72,7 @@ def sort_college():
     count = 0
     collegecode = drop_college.get()
     student_list.delete(0, END)
+    row_num = 1
     with open(college_path, "r") as f:      #For determining what we will keep
       reader = csv.reader(f)
       for row in reader:
@@ -83,7 +86,7 @@ def sort_college():
       reader = csv.reader(f)
       for row in reader:                    #For showing kept
         if count in college_index:
-          student_list.insert("end", row[0] + "   " + row[1] + " " + row[2])
+          student_list.insert("end",str(row_num) + ")    " + row[0] + "   " + row[1] + " " + row[2])
         count += 1
     
     count = 0
@@ -101,11 +104,29 @@ def sort_college():
 #Show list
 def show():
   student_list.delete(0, END)
+  row_num = 1
   with open(student_path, "r") as f:
     reader = csv.reader(f)
     next(reader)
     for row in reader:
-        student_list.insert("end", row[0] + "   " + row[1] + " " + row[2])
+        student_list.insert("end",str(row_num) + ")    " + row[0] + "   " + row[1] + " " + row[2])
+        row_num += 1
+
+  row_num = 1
+  with open(program_path, "r") as f:
+    reader = csv.reader(f)
+    next(reader)
+    for row in reader:
+        program_list.insert("end", str(row_num) + ")   " + row[0] + "   " + row[1])
+        row_num += 1
+
+  row_num = 1
+  with open(college_path, "r") as f:
+    reader = csv.reader(f)
+    next(reader)
+    for row in reader:
+        college_list.insert("end",str(row_num) + ")    " + row[0] + "       " + row[1])
+        row_num += 1
 
 def add_student():
   def submit():
@@ -488,29 +509,94 @@ def edit_student():
 #Checks if searched is on the list and updates the list
 def search(event):
 
-  def update(students):
+  def update_stud(students):
     student_list.delete(0, END)
+    row_num = 1
     for student in students:
-      student_list.insert("end", student)
+      student_list.insert("end",str(row_num) + ")    " + student[0] + "   " + student[1] + " " + student[2])
+      row_num += 1
   
+  def update_prog(programs):
+    program_list.delete(0, END)
+    row_num = 1
+    for program in programs:
+      program_list.insert("end", str(row_num) + ")    " + program[0] + "   " + program[1])
+      row_num += 1
+  
+  def update_col(colleges):
+    college_list.delete(0, END)
+    row_num = 1
+    for college in colleges:
+      college_list.insert("end", str(row_num) + ")    " + college[0] + "   " + college[1])
+      row_num += 1
+
+  prog_col = []
+  count = 0
   searched = search_box.get()
 
+  #Student List
   with open(student_path, "r") as f:
     reader = csv.reader(f)
     if searched == '':
-      show()
+      student = []
+      next(reader)
+      student = reader
     else:
       student = []
       for row in reader:
         if searched in row[0]:
-          student.append(row)
+          student.append([row[0], row[1], row[2]])
+          prog_col.append(count)
+          count += 1
+        else:
+          count += 1
 
-    update(student)
+    update_stud(student)
+
+  #Program List
+  count = 0
+  with open(program_path, "r") as f:
+    reader = csv.reader(f)
+    if searched == '':
+      program = []
+      next(reader)
+      program = reader
+    else:
+      program = []
+      for row in reader:
+        if count in prog_col:
+          program.append([row[0], row[1]])
+          count += 1
+        else:
+          count += 1
+    
+    update_prog(program)
+  
+  #College list
+  count = 0
+  with open(college_path, "r") as f:
+    reader = csv.reader(f)
+    if searched == '':
+      college = []
+      next(reader)
+      college = reader
+    else:
+      college = []
+      for row in reader:
+        if count in prog_col:
+          college.append([row[0], row[1]])
+          count += 1
+        else:
+          count += 1
+
+    update_col(college)
+
+
 
 main_window = Tk()
 
 main_window.title("Student Information System")
-main_window.geometry("1024x768")
+main_window.geometry("1354x768")
 
 
 menubar = Menu(main_window)
@@ -547,8 +633,38 @@ search_box.pack(side=RIGHT)
 #Label for search box
 Label(search_frame, text="Search by ID#").pack(side=RIGHT)
 
-student_list = Listbox(main_window, width=300, height=300, font=("Helvetica", 15))
+#Listing students
+
+main_frame = Frame(main_window)
+main_frame.pack(side=LEFT)
+
+list_frame = Frame(main_frame)
+scroll = Scrollbar(list_frame, orient=VERTICAL)
+Label(list_frame, text="STUDENT", font=("Helvetica", 15)).pack(side=TOP)
+student_list = Listbox(list_frame, width=50, height=25, font=("Helvetica", 15), yscrollcommand=scroll.set)
+scroll.config(command=student_list.yview)
+scroll.pack(side=RIGHT, fill=Y)
+list_frame.pack(side=LEFT)
 student_list.pack(pady=30, padx=20)
+
+program_frame = Frame(main_frame)
+program_scroll = Scrollbar(program_frame, orient=VERTICAL)
+Label(program_frame, text="PROGRAM", font=("Helvetica", 15)).pack(side=TOP)
+program_list = Listbox(program_frame, width=60, height=10, font=("Helvetica", 15), yscrollcommand=program_scroll.set)
+program_scroll.config(command=program_list.yview)
+program_scroll.pack(side=RIGHT, fill=Y)
+program_frame.pack(side=TOP)
+program_list.pack(pady=30, padx=20)
+
+college_frame = Frame(main_frame)
+college_scroll = Scrollbar(college_frame, orient=VERTICAL)
+Label(college_frame, text="COLLEGE", font=("Helvetica", 15)).pack(side=TOP)
+college_list = Listbox(college_frame, width=60, height=10, font=("Helvetica", 15), yscrollcommand=college_scroll.set)
+college_scroll.config(command=college_list.yview)
+college_scroll.pack(side=RIGHT, fill=Y)
+college_frame.pack(side=TOP)
+college_list.pack(pady=30, padx=20)
+
 
 show()
 
