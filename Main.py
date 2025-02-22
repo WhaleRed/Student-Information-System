@@ -1,6 +1,8 @@
 from tkinter import *
 from tkinter import ttk
+from tkinter import messagebox
 import csv
+import re
 
 student_path = "StudentData.csv"
 program_path = "ProgramData.csv"
@@ -21,49 +23,106 @@ student_edit = []
 college_edit = []
 program_edit = []
 
+def valid_id(idnumber):
+  pattern = r"^\d{4}-\d{4}$"  
+  return bool(re.match(pattern, idnumber))
+
+def exists(idnumber):
+  idnums = []
+  with open(student_path, "r") as f:
+    reader = csv.reader(f)
+    for row in reader:
+      idnums.append(row[0])
+  return bool(idnumber in idnums)
+
 def sort_year_level():
 
   def sub_year():
     year = drop_year.get()
     student_list.delete(0, END)
-    row_num = 1
+    program_list.delete(0, END)
+    college_list.delete(0, END)
+    row_num = 0
+    progcol_sort = []
     with open(student_path, "r") as f:
       reader = csv.reader(f)
       for row in reader:
         if row[3] == year:
           student_list.insert("end",str(row_num) + ")    " + row[0] + "   " + row[1] + " " + row[2])
+          progcol_sort.append(row_num)
+        row_num += 1
+
+    row_num = 0
+    with open(program_path, "r") as f:
+      reader = csv.reader(f)
+      for row in reader:
+        if row_num in progcol_sort:
+          program_list.insert("end",str(row_num) + ")    " + row[0] + "   " + row[1])
+        row_num += 1
+
+    row_num = 0
+    with open(college_path, "r") as f:
+      reader = csv.reader(f)
+      for row in reader:
+        if row_num in progcol_sort:
+          college_list.insert("end",str(row_num) + ")    " + row[0] + "   " + row[1])
+        row_num += 1
+    
 
   sort_window = Toplevel()
   sort_window.title("Sorting by Year level")
   sort_window.geometry("300x200")
+  sort_window.resizable(FALSE,FALSE)
   Label(sort_window,  text="Year level", font=("Helvetica", 12)).pack()
   choices = ["1", "2", "3", "4"]
-  drop_year = ttk.Combobox(sort_window, text="None", values=choices, font=("Helvetica", 12))
+  drop_year = ttk.Combobox(sort_window, text="None", values=choices, font=("Helvetica", 12), state="readonly")
   drop_year.pack()
-  submit = Button(sort_window, text="Sort", command=sub_year)
-  submit.pack()
+  submit = Button(sort_window, text="Sort", command=sub_year,font=("Helvetica", 12))
+  submit.pack(pady=15)
 
 def sort_gender():
 
   def sub_gender():
     gender = drop_gender.get()
     student_list.delete(0, END)
-    row_num = 1
+    program_list.delete(0, END)
+    college_list.delete(0, END)
+    row_num = 0
+    progcol_sort = []
     with open(student_path, "r") as f:
       reader = csv.reader(f)
       for row in reader:
         if row[4] == gender:
           student_list.insert("end",str(row_num) + ")    " + row[0] + "   " + row[1] + " " + row[2])
+          progcol_sort.append(row_num)
+        row_num += 1
+    
+    row_num = 0
+    with open(program_path, "r") as f:
+      reader = csv.reader(f)
+      for row in reader:
+        if row_num in progcol_sort:
+          program_list.insert("end",str(row_num) + ")    " + row[0] + "   " + row[1])
+        row_num += 1
+
+    row_num = 0
+    with open(college_path, "r") as f:
+      reader = csv.reader(f)
+      for row in reader:
+        if row_num in progcol_sort:
+          college_list.insert("end",str(row_num) + ")    " + row[0] + "   " + row[1])
+        row_num += 1
 
   sort_window = Toplevel()
   sort_window.title("Sorting Gender")
   sort_window.geometry("300x200")
+  sort_window.resizable(FALSE,FALSE)
   Label(sort_window,  text="Gender", font=("Helvetica", 12)).pack()
   choices = ["Female", "Male"]
-  drop_gender = ttk.Combobox(sort_window, text="None", values=choices, font=("Helvetica", 12))
+  drop_gender = ttk.Combobox(sort_window, text="None", values=choices, font=("Helvetica", 12), state="readonly")
   drop_gender.pack()
-  submit = Button(sort_window, text="Sort", command=sub_gender)
-  submit.pack()
+  submit = Button(sort_window, text="Sort", command=sub_gender, font=("Helvetica", 12))
+  submit.pack(pady=15)
   
 def sort_college():
 
@@ -72,7 +131,9 @@ def sort_college():
     count = 0
     collegecode = drop_college.get()
     student_list.delete(0, END)
-    row_num = 1
+    program_list.delete(0, END)
+    college_list.delete(0, END)
+    row_num = 0
     with open(college_path, "r") as f:      #For determining what we will keep
       reader = csv.reader(f)
       for row in reader:
@@ -88,22 +149,41 @@ def sort_college():
         if count in college_index:
           student_list.insert("end",str(row_num) + ")    " + row[0] + "   " + row[1] + " " + row[2])
         count += 1
-    
-    count = 0
+        row_num += 1
+
+    row_num = 0
+    with open(program_path, "r") as f:
+      reader = csv.reader(f)
+      for row in reader:
+        if row_num in college_index:
+          program_list.insert("end",str(row_num) + ")    " + row[0] + "   " + row[1])
+        row_num += 1
+
+    row_num = 0
+    with open(college_path, "r") as f:
+      reader = csv.reader(f)
+      for row in reader:
+        if row_num in college_index:
+          college_list.insert("end",str(row_num) + ")    " + row[0] + "   " + row[1])
+        row_num += 1
 
   sort_window = Toplevel()
   sort_window.title("Sorting College")
   sort_window.geometry("300x200")
+  sort_window.resizable(FALSE,FALSE)
   Label(sort_window,  text="College", font=("Helvetica", 12)).pack()
   choices = ["CASS", "CCS", "CSM", "CEBA", "CED", "CHS", "COE"]
-  drop_college = ttk.Combobox(sort_window, text="None", values=choices, font=("Helvetica", 12))
+  drop_college = ttk.Combobox(sort_window, text="None", values=choices, font=("Helvetica", 12), state="readonly")
   drop_college.pack()
-  submit = Button(sort_window, text="Sort", command=sub_college)
-  submit.pack() 
+  submit = Button(sort_window, text="Sort", command=sub_college, font=("Helvetica", 12))
+  submit.pack(pady=15) 
+
 
 #Show list
 def show():
   student_list.delete(0, END)
+  program_list.delete(0, END)
+  college_list.delete(0, END)
   row_num = 1
   with open(student_path, "r") as f:
     reader = csv.reader(f)
@@ -129,92 +209,103 @@ def show():
         row_num += 1
 
 def add_student():
+
   def submit():
-    #Adding row for Student CSV
-    student_new.append(id_entry.get())
-    student_new.append(fname_entry.get())
-    student_new.append(lname_entry.get())
-    student_new.append(ylvl_entry.get())
-    student_new.append(gender_entry.get())
-    student_new.append(pcode_entry.get())
-    with open(student_path, 'a', newline="") as f:
-      writer = csv.writer(f)
-      writer.writerow(student_new)
-    student_new.clear()   #Clear list
+      if exists(id_entry.get()) == True:
+        messagebox.showerror("Invalid ID Number", "ID Number already exists")
+      elif valid_id(id_entry.get()) == False:
+        messagebox.showerror("Invalid Format", "ID Number Invalid Format")
+      else:
+        #Adding row for Student CSV
+        student_new.append(id_entry.get())
+        student_new.append(fname_entry.get())
+        student_new.append(lname_entry.get())
+        student_new.append(ylvl_entry.get())
+        student_new.append(gender_entry.get())
+        student_new.append(pcode_entry.get())
+        with open(student_path, 'a', newline="") as f:
+          writer = csv.writer(f)
+          writer.writerow(student_new)
+        student_new.clear()   #Clear list
+        #Adding row for Program CSV
+        program_new.append(progcode_entry.get())
+        program_new.append(pname_entry.get())
+        program_new.append(ccode_entry.get())
+        with open(program_path, 'a', newline="") as f:
+          writer = csv.writer(f)
+          writer.writerow(program_new)
+        program_new.clear()   #Clear list
 
-    #Adding row for Program CSV
-    program_new.append(progcode_entry.get())
-    program_new.append(pname_entry.get())
-    program_new.append(ccode_entry.get())
-    with open(program_path, 'a', newline="") as f:
-      writer = csv.writer(f)
-      writer.writerow(program_new)
-    program_new.clear()   #Clear list
+        college_new.append(colcode_entry.get())
+        college_new.append(colname_entry.get())
+        with open(college_path, 'a', newline="") as f:
+          writer = csv.writer(f)
+          writer.writerow(college_new)
+        college_new.clear()   #Clear list
 
-    college_new.append(colcode_entry.get())
-    college_new.append(colname_entry.get())
-    with open(college_path, 'a', newline="") as f:
-      writer = csv.writer(f)
-      writer.writerow(college_new)
-    college_new.clear()   #Clear list
-
-    show()
+        show()
 
   add_window = Toplevel()
   add_window.title("Add Student")
+  add_window.resizable(FALSE,FALSE)
 
   add_frame = Frame(add_window)
   add_frame.grid(row=0, column=0,)
 
+
   Label(add_frame, text="Student", font=('Helvetica', 20)).grid(row=0, column=0, columnspan=3, padx=10, pady=10)
   
-  Label(add_frame, text="ID#:", font=('Helvetica', 15)).grid(row=1, column=0, padx=10)
-  id_entry = Entry(add_frame, font=('Helvetica', 15))
-  id_entry.grid(row=1, column=1, padx=10, columnspan=2)
+  Label(add_frame, text="ID#:", font=('Helvetica', 15)).grid(row=1, column=0, padx=10, pady=5)
+  id_entry = Entry(add_frame, font=('Helvetica', 15),width=40)
+  id_entry.grid(row=1, column=1, padx=10, pady=5, columnspan=2)
 
-  Label(add_frame, text="First name:", font=('Helvetica', 15)).grid(row=2, column=0, padx=10)
-  fname_entry = Entry(add_frame, font=('Helvetica', 15))
-  fname_entry.grid(row=2, column=1, padx=10, columnspan=2)
+  Label(add_frame, text="First name:", font=('Helvetica', 15)).grid(row=2, column=0, padx=10, pady=5)
+  fname_entry = Entry(add_frame, font=('Helvetica', 15),width=40)
+  fname_entry.grid(row=2, column=1, padx=10, pady=5, columnspan=2)
 
-  Label(add_frame, text="Last name:", font=('Helvetica', 15)).grid(row=3, column=0, padx=10)
-  lname_entry = Entry(add_frame, font=('Helvetica', 15))
-  lname_entry.grid(row=3, column=1, padx=10, columnspan=2)
+  Label(add_frame, text="Last name:", font=('Helvetica', 15)).grid(row=3, column=0, padx=10, pady=5)
+  lname_entry = Entry(add_frame, font=('Helvetica', 15),width=40)
+  lname_entry.grid(row=3, column=1, padx=10, pady=5, columnspan=2)
 
-  Label(add_frame, text="Year level:", font=('Helvetica', 15)).grid(row=4, column=0, padx=10)
-  ylvl_entry = Entry(add_frame, font=('Helvetica', 15))
-  ylvl_entry.grid(row=4, column=1, padx=10, columnspan=2)
+  Label(add_frame, text="Year level:", font=('Helvetica', 15)).grid(row=4, column=0, padx=10, pady=5)
+  ychoices = ["1", "2", "3", "4"]
+  ylvl_entry = ttk.Combobox(add_frame, font=('Helvetica', 15), values=ychoices, state="readonly", width=38)
+  ylvl_entry.grid(row=4, column=1, padx=10, pady=5, columnspan=2)
 
-  Label(add_frame, text="Gender:", font=('Helvetica', 15)).grid(row=5, column=0, padx=10)
-  gender_entry = Entry(add_frame, font=('Helvetica', 15))
-  gender_entry.grid(row=5, column=1, padx=10, columnspan=2)
+  Label(add_frame, text="Gender:", font=('Helvetica', 15)).grid(row=5, column=0, padx=10, pady=5)
+  gchoices = ["Male", "Female"]
+  gender_entry = ttk.Combobox(add_frame, font=('Helvetica', 15), values=gchoices, state="readonly", width=38)
+  gender_entry.grid(row=5, column=1, padx=10, pady=5, columnspan=2)
 
-  Label(add_frame, text="Program code:", font=('Helvetica', 15)).grid(row=6, column=0, padx=10)
-  pcode_entry = Entry(add_frame, font=('Helvetica', 15))
-  pcode_entry.grid(row=6, column=1, padx=10, columnspan=2)
+  Label(add_frame, text="Program code:", font=('Helvetica', 15)).grid(row=6, column=0, padx=10, pady=5)
+  pcode_entry = Entry(add_frame, font=('Helvetica', 15), width=40)
+  pcode_entry.grid(row=6, column=1, padx=10, pady=5, columnspan=2)
 
   Label(add_frame, text="Program", font=('Helvetica', 20)).grid(row=7, column=0, columnspan=3, padx=10, pady=10)
   
   Label(add_frame, text="Program code:", font=('Helvetica', 15)).grid(row=8, column=0, padx=10)
-  progcode_entry = Entry(add_frame, font=('Helvetica', 15))
-  progcode_entry.grid(row=8, column=1, padx=10, columnspan=2)
+  progcode_entry = Entry(add_frame, font=('Helvetica', 15), width=40)
+  progcode_entry.grid(row=8, column=1, padx=10, pady=5, columnspan=2)
 
-  Label(add_frame, text="Program name:", font=('Helvetica', 15)).grid(row=9, column=0, padx=10)
-  pname_entry = Entry(add_frame, font=('Helvetica', 15))
-  pname_entry.grid(row=9, column=1, padx=10, columnspan=2)
+  Label(add_frame, text="Program name:", font=('Helvetica', 15)).grid(row=9, column=0, padx=10, pady=5)
+  pname_entry = Entry(add_frame, font=('Helvetica', 15), width=40)
+  pname_entry.grid(row=9, column=1, padx=10, pady=5, columnspan=2)
 
-  Label(add_frame, text="College code:", font=('Helvetica', 15)).grid(row=10, column=0, padx=10)
-  ccode_entry = Entry(add_frame, font=('Helvetica', 15))
-  ccode_entry.grid(row=10, column=1, padx=10, columnspan=2)
+  Label(add_frame, text="College code:", font=('Helvetica', 15)).grid(row=10, column=0, padx=10, pady=5)
+  cchoices = ["CCS", "CSM", "CHS", "COE", "CED", "CEBA", "CASS"]
+  ccode_entry = ttk.Combobox(add_frame, font=('Helvetica', 15), values=cchoices, state="readonly", width=38)
+  ccode_entry.grid(row=10, column=1, padx=10, pady=5, columnspan=2)
 
   Label(add_frame, text="College", font=('Helvetica', 20)).grid(row=11, column=0, columnspan=3, padx=10, pady=10)
 
   Label(add_frame, text="College code:", font=('Helvetica', 15)).grid(row=12, column=0, padx=10)
-  colcode_entry = Entry(add_frame, font=('Helvetica', 15))
-  colcode_entry.grid(row=12, column=1, padx=10, columnspan=2)
+  colcode_entry = ttk.Combobox(add_frame, font=('Helvetica', 15), values=cchoices, state="readonly", width=38)
+  colcode_entry.grid(row=12, column=1, padx=10, pady=5, columnspan=2)
 
-  Label(add_frame, text="College name:", font=('Helvetica', 15)).grid(row=13, column=0, padx=10)
-  colname_entry = Entry(add_frame, font=('Helvetica', 15))
-  colname_entry.grid(row=13, column=1, padx=10, columnspan=2)
+  Label(add_frame, text="College name:", font=('Helvetica', 15)).grid(row=13, column=0, padx=10, pady=5)
+  cnchoices = ["College of Computer Studies", "College of Science and Mathematics", "College of Engineering", "College of Health Sciences", "College of Education", "College of Economics and Bussiness Administration", "College of Arts and Social Sciences"]
+  colname_entry = ttk.Combobox(add_frame, font=('Helvetica', 15), values=cnchoices, state="readonly", width=38)
+  colname_entry.grid(row=13, column=1, padx=10, pady=5, columnspan=2)
 
   submit_button = Button(add_frame, text="Add Student", font=('Helvetica', 15), command=submit)
   submit_button.grid(row=14, column=0, columnspan=3, pady=10)
@@ -225,72 +316,77 @@ def delete_student():
 
   def deleting():
 
-    count = 0
-    row_count = 0
-    with open(student_path, "r") as f:
-      reader = csv.reader(f)
-      for row in reader:
-        if row[0] != delstudent.get():
-          student_keep.append(row)
-          count += 1
-        else:
-          #Takes the row number, to be used at deleting rows from the other csv
-          row_count = count
-         
-    count = 0     #Reset count
+    if valid_id(delstudent.get()) == False:
+      messagebox.showerror("Invalid Format", "Invalid ID Number Format")
+    elif exists(delstudent.get()) == False:
+      messagebox.showerror("Invalid ID", "Student does not Exist")
+    else:
+      count = 0
+      row_count = 0
+      with open(student_path, "r") as f:
+        reader = csv.reader(f)
+        for row in reader:
+          if row[0] != delstudent.get():
+            student_keep.append(row)
+            count += 1
+          else:
+            #Takes the row number, to be used at deleting rows from the other csv
+            row_count = count
+          
+      count = 0     #Reset count
 
-    with open(program_path, "r") as f:
-      reader = csv.reader(f)
-      for row in reader:
-        if row_count != count:
-          program_keep.append(row)
-          count += 1
-        else:
-          count += 1
-    
-    count = 0
-    
-    with open(college_path, "r") as f:
-      reader = csv.reader(f)
-      for row in reader:
-        if row_count != count:
-          college_keep.append(row)
-          count += 1
-        else:
-          count += 1
-    
-    count = 0
-    row_count = 0
+      with open(program_path, "r") as f:
+        reader = csv.reader(f)
+        for row in reader:
+          if row_count != count:
+            program_keep.append(row)
+            count += 1
+          else:
+            count += 1
+      
+      count = 0
+      
+      with open(college_path, "r") as f:
+        reader = csv.reader(f)
+        for row in reader:
+          if row_count != count:
+            college_keep.append(row)
+            count += 1
+          else:
+            count += 1
+      
+      count = 0
+      row_count = 0
 
-    #Write back the kept rows
-    with open(student_path, "w", newline="") as f:
-      writer = csv.writer(f)
-      for row in student_keep:
-        writer.writerow(row)
-    
-    with open(college_path, "w", newline="") as f:
-      writer = csv.writer(f)
-      for row in college_keep:
-        writer.writerow(row)
+      #Write back the kept rows
+      with open(student_path, "w", newline="") as f:
+        writer = csv.writer(f)
+        for row in student_keep:
+          writer.writerow(row)
+      
+      with open(college_path, "w", newline="") as f:
+        writer = csv.writer(f)
+        for row in college_keep:
+          writer.writerow(row)
 
-    with open(program_path, "w", newline="") as f:
-      writer = csv.writer(f)
-      for row in program_keep:
-        writer.writerow(row)
-    
-    #clear for no duplicates
-    student_keep.clear()
-    college_keep.clear()
-    program_keep.clear()
+      with open(program_path, "w", newline="") as f:
+        writer = csv.writer(f)
+        for row in program_keep:
+          writer.writerow(row)
+      
+      #clear for no duplicates
+      student_keep.clear()
+      college_keep.clear()
+      program_keep.clear()
 
-    show()   #Relist
+      show()   #Relist
 
   def clear_text(e):
     delstudent.delete(0, "end")
 
   delete_window = Toplevel()
   delete_window.title("Delete Student")
-
+  delete_window.resizable(FALSE,FALSE)
   del_frame = Frame(delete_window)
   del_frame.grid(row=0,column=0, pady=10, padx=10)
 
@@ -307,204 +403,262 @@ def delete_student():
 
 def edit_student():
 
-  def submit_edit():
-    student_e = []
-    program_e = []
-    college_e = []
+  def editing():
 
-    count = 0
+    def submit_edit():
+      if valid_id(id_entry.get()) == False:
+        messagebox.showerror("Invalid Format", "ID Number Invalid Format")
+      elif exists(id_entry.get()) == True and id_entry.get() != student:
+        messagebox.showerror("Invalid ID Number", "ID Number Already Exists")
+      else:
+        student_e = []
+        program_e = []
+        college_e = []
 
-    #Apendiing row for Student CSV
-    student_e.append(id_entry.get())
-    student_e.append(fname_entry.get())
-    student_e.append(lname_entry.get())
-    student_e.append(ylvl_entry.get())
-    student_e.append(gender_entry.get())
-    student_e.append(pcode_entry.get())
+        count = 0
 
-    #Apendiing row for Program CSV
-    program_e.append(progcode_entry.get())
-    program_e.append(pname_entry.get())
-    program_e.append(ccode_entry.get())
+        #Apendiing row for Student CSV
+        student_e.append(id_entry.get())
+        student_e.append(fname_entry.get())
+        student_e.append(lname_entry.get())
+        student_e.append(ylvl_entry.get())
+        student_e.append(gender_entry.get())
+        student_e.append(pcode_entry.get())
 
+        #Apendiing row for Program CSV
+        program_e.append(progcode_entry.get())
+        program_e.append(pname_entry.get())
+        program_e.append(ccode_entry.get())
 
-    #Apending row for College csv
-    college_e.append(colcode_entry.get())
-    college_e.append(colname_entry.get())
+        #Apending row for College csv
+        college_e.append(colcode_entry.get())
+        college_e.append(colname_entry.get())
 
-    #Reading for insert
-    with open(student_path, "r") as f:
-      reader = csv.reader(f)
-      for row in reader:
-        if editing == count:
-          student_edit.append(student_e)
+        #Reading for insert
+        with open(student_path, "r") as f:
+          reader = csv.reader(f)
+          for row in reader:
+            if editing == count:
+              student_edit.append(student_e)
+              count += 1
+            else:
+              student_edit.append(row)
+              count += 1
+
+        count = 0
+
+        with open(college_path, "r") as f:
+          reader = csv.reader(f)
+          for row in reader:
+            if editing == count:
+              college_edit.append(college_e)
+              count += 1
+            else:
+              college_edit.append(row)
+              count += 1
+
+        count = 0
+
+        with open(program_path, "r") as f:
+          reader = csv.reader(f)
+          for row in reader:
+            if editing == count:
+              program_edit.append(program_e)
+              count += 1
+            else:
+              program_edit.append(row)
+              count += 1
+
+        count = 0
+
+        #Write back
+        with open(student_path, "w", newline="") as f:
+          writer = csv.writer(f)
+          for row in student_edit:
+            writer.writerow(row)
+
+        with open(college_path, "w", newline="") as f:
+          writer = csv.writer(f)
+          for row in college_edit:
+            writer.writerow(row)
+
+        with open(program_path, "w", newline="") as f:
+          writer = csv.writer(f)
+          for row in program_edit:
+            writer.writerow(row)
+          
+        #clear
+        student_edit.clear()
+        college_edit.clear()
+        program_edit.clear()
+
+        student_e.clear()
+        college_e.clear()
+        program_e.clear()
+
+        show()
+
+    if valid_id(editstudent.get()) == False:
+      messagebox.showerror("Invalid Format", "Invalid ID Number Format")
+    else: 
+      student = editstudent.get()
+      edit_window.destroy()
+
+      count = 0
+      editing = 0
+      #Read first
+      with open(student_path, "r") as f:
+        reader = csv.reader(f)
+        for row in reader:
+          if row[0] == student:
+            student_edit.append(row)
+            editing = count
           count += 1
-        else:
-          student_edit.append(row)
+
+      count = 0
+
+      with open(program_path, "r") as f:
+        reader = csv.reader(f)
+        for row in reader:
+          if count == editing:
+            program_edit.append(row)
           count += 1
+      
+      count = 0
 
-    count = 0
-
-    with open(college_path, "r") as f:
-      reader = csv.reader(f)
-      for row in reader:
-        if editing == count:
-          college_edit.append(college_e)
+      with open(college_path, "r") as f:
+        reader = csv.reader(f)
+        for row in reader:
+          if count == editing:
+            college_edit.append(row)
           count += 1
-        else:
-          college_edit.append(row)
-          count += 1
+      
+      count = 0
 
-    count = 0
+      ######
 
-    with open(program_path, "r") as f:
-      reader = csv.reader(f)
-      for row in reader:
-        if editing == count:
-          program_edit.append(program_e)
-          count += 1
-        else:
-          program_edit.append(row)
-          count += 1
+      editing_window = Toplevel()
+      editing_window.title("Editing Student")
+      editing_window.resizable(FALSE,FALSE)
+      edit_frame = Frame(editing_window)
+      edit_frame.grid(row=0, column=0)
 
-    count = 0
+      Label(edit_frame, text="Student", font=('Helvetica', 20)).grid(row=0, column=0, columnspan=3, padx=10, pady=10)
+      
+      Label(edit_frame, text="ID#:", font=('Helvetica', 15)).grid(row=1, column=0, padx=10)
+      id_entry = Entry(edit_frame, font=('Helvetica', 15), width=40)
+      id_entry.grid(row=1, column=1, padx=10, columnspan=2, pady=5)
+      id_entry.insert(0, student_edit[0][0])
 
-    #Write back
-    with open(student_path, "w", newline="") as f:
-      writer = csv.writer(f)
-      for row in student_edit:
-        writer.writerow(row)
+      Label(edit_frame, text="First name:", font=('Helvetica', 15)).grid(row=2, column=0, padx=10)
+      fname_entry = Entry(edit_frame, font=('Helvetica', 15), width=40)
+      fname_entry.grid(row=2, column=1, padx=10, columnspan=2, pady=5)
+      fname_entry.insert(0, student_edit[0][1])
 
-    with open(college_path, "w", newline="") as f:
-      writer = csv.writer(f)
-      for row in college_edit:
-        writer.writerow(row)
+      Label(edit_frame, text="Last name:", font=('Helvetica', 15)).grid(row=3, column=0, padx=10)
+      lname_entry = Entry(edit_frame, font=('Helvetica', 15), width=40)
+      lname_entry.grid(row=3, column=1, padx=10, columnspan=2, pady=5)
+      lname_entry.insert(0, student_edit[0][2])
 
-    with open(program_path, "w", newline="") as f:
-      writer = csv.writer(f)
-      for row in program_edit:
-        writer.writerow(row)
-    
-    #clear
-    student_edit.clear()
-    college_edit.clear()
-    program_edit.clear()
+      Label(edit_frame, text="Year level:", font=('Helvetica', 15)).grid(row=4, column=0, padx=10)
+      ychoices = ["1","2","3","4"]
+      ylvl_entry = ttk.Combobox(edit_frame, font=('Helvetica', 15), values=ychoices, state="readonly", width=38)
+      ylvl_entry.grid(row=4, column=1, padx=10, columnspan=2, pady=5)
+      #Default Value
+      run = 0
+      for choices in ychoices:
+        if choices == student_edit[0][3]:         
+          ylvl_entry.current(run)
+        run += 1
 
-    student_e.clear()
-    college_e.clear()
-    program_e.clear()
+      Label(edit_frame, text="Gender:", font=('Helvetica', 15)).grid(row=5, column=0, padx=10)
+      gchoices = ["Male", "Female"]
+      gender_entry = ttk.Combobox(edit_frame, font=('Helvetica', 15), values=gchoices, state="readonly", width=38)
+      gender_entry.grid(row=5, column=1, padx=10, columnspan=2,pady=5)
+      #Default Value
+      run = 0
+      for choices in gchoices:
+        if choices == student_edit[0][4]:         
+          gender_entry.current(run)
+        run += 1
 
-    show()
+      Label(edit_frame, text="Program code:", font=('Helvetica', 15)).grid(row=6, column=0, padx=10)
+      pcode_entry = Entry(edit_frame, font=('Helvetica', 15),width=40)
+      pcode_entry.grid(row=6, column=1, padx=10, columnspan=2,pady=5)
+      pcode_entry.insert(0, student_edit[0][5])
 
-  editing = 0
-  count = 0
-  for student in student_list.curselection():     #For reference which student user is editing
-    editing = student+1
-  
-  #Read first
-  with open(student_path, "r") as f:
-    reader = csv.reader(f)
-    for row in reader:
-      if count == editing:
-        student_edit.append(row)
-      count += 1
-  
-  count = 0
+      Label(edit_frame, text="Program", font=('Helvetica', 20)).grid(row=7, column=0, columnspan=3, padx=10, pady=10)
+      
+      Label(edit_frame, text="Program code:", font=('Helvetica', 15)).grid(row=8, column=0, padx=10)
+      progcode_entry = Entry(edit_frame, font=('Helvetica', 15), width=40)
+      progcode_entry.grid(row=8, column=1, padx=10, columnspan=2,pady=5)
+      progcode_entry.insert(0, program_edit[0][0])
 
-  with open(college_path, "r") as f:
-    reader = csv.reader(f)
-    for row in reader:
-      if count == editing:
-        college_edit.append(row)
-      count += 1
-  
-    count = 0
+      Label(edit_frame, text="Program name:", font=('Helvetica', 15)).grid(row=9, column=0, padx=10)
+      pname_entry = Entry(edit_frame, font=('Helvetica', 15), width=40)
+      pname_entry.grid(row=9, column=1, padx=10, columnspan=2,pady=5)
+      pname_entry.insert(0, program_edit[0][1])
 
-  with open(program_path, "r") as f:
-    reader = csv.reader(f)
-    for row in reader:
-      if count == editing:
-        program_edit.append(row)
-      count += 1
-  
-  count = 0
+      Label(edit_frame, text="College code:", font=('Helvetica', 15)).grid(row=10, column=0, padx=10)
+      cchoices = ["CCS", "CHS", "CSM", "COE", "CEBA", "CASS", "CED"]
+      ccode_entry = ttk.Combobox(edit_frame, font=('Helvetica', 15), state="readonly", values=cchoices, width=38)
+      ccode_entry.grid(row=10, column=1, padx=10, columnspan=2,pady=5)
+      #Default Value
+      run = 0
+      for choices in cchoices:
+        if choices == program_edit[0][2]:         
+          ccode_entry.current(run)
+        run += 1
+
+      Label(edit_frame, text="College", font=('Helvetica', 20)).grid(row=11, column=0, columnspan=3, padx=10, pady=10)
+
+      Label(edit_frame, text="College code:", font=('Helvetica', 15)).grid(row=12, column=0, padx=10)
+      colcode_entry = ttk.Combobox(edit_frame, font=('Helvetica', 15), state="readonly", values=cchoices, width = 38)
+      colcode_entry.grid(row=12, column=1, padx=10, columnspan=2, pady=5)
+      #Default Value
+      run = 0
+      for choices in cchoices:
+        if choices == college_edit[0][0]:         
+          colcode_entry.current(run)
+        run += 1
+
+      Label(edit_frame, text="College name:", font=('Helvetica', 15)).grid(row=13, column=0, padx=10)
+      cnchoices = ["College of Computer Studies", "College of Science and Mathematics", "College of Engineering", "College of Health Sciences", "College of Education", "College of Economics and Bussiness Administration", "College of Arts and Social Sciences"]
+      colname_entry = ttk.Combobox(edit_frame, font=('Helvetica', 15), state="readonly", values=cnchoices, width = 38)
+      colname_entry.grid(row=13, column=1, padx=10, columnspan=2, pady=5)
+      #Default Value
+      run = 0
+      for choices in cnchoices:
+        if choices == college_edit[0][1]:         
+          colname_entry.current(run)
+        run += 1
+
+      #Clear
+      student_edit.clear()
+      program_edit.clear()
+      college_edit.clear()
+
+      submit_button = Button(edit_frame, text="Submit", font=('Helvetica', 15), command=submit_edit)
+      submit_button.grid(row=14, column=0, columnspan=3, pady=10)
+
+
+  def clear_text(e):
+    editstudent.delete(0, "end")
 
   edit_window = Toplevel()
-  edit_window.title("Editing Student")
+  edit_window.title("Delete Student")
+  edit_window.resizable(FALSE,FALSE)
+  del_frame = Frame(edit_window)
+  del_frame.grid(row=0,column=0, pady=10, padx=10)
 
-  edit_frame = Frame(edit_window)
-  edit_frame.grid(row=0, column=0,)
-
-  Label(edit_frame, text="Student", font=('Helvetica', 20)).grid(row=0, column=0, columnspan=3, padx=10, pady=10)
-  
-  Label(edit_frame, text="ID#:", font=('Helvetica', 15)).grid(row=1, column=0, padx=10)
-  id_entry = Entry(edit_frame, font=('Helvetica', 15))
-  id_entry.grid(row=1, column=1, padx=10, columnspan=2)
-  id_entry.insert(0, student_edit[0][0])
-
-  Label(edit_frame, text="First name:", font=('Helvetica', 15)).grid(row=2, column=0, padx=10)
-  fname_entry = Entry(edit_frame, font=('Helvetica', 15))
-  fname_entry.grid(row=2, column=1, padx=10, columnspan=2)
-  fname_entry.insert(0, student_edit[0][1])
-
-  Label(edit_frame, text="Last name:", font=('Helvetica', 15)).grid(row=3, column=0, padx=10)
-  lname_entry = Entry(edit_frame, font=('Helvetica', 15))
-  lname_entry.grid(row=3, column=1, padx=10, columnspan=2)
-  lname_entry.insert(0, student_edit[0][2])
-
-  Label(edit_frame, text="Year level:", font=('Helvetica', 15)).grid(row=4, column=0, padx=10)
-  ylvl_entry = Entry(edit_frame, font=('Helvetica', 15))
-  ylvl_entry.grid(row=4, column=1, padx=10, columnspan=2)
-  ylvl_entry.insert(0, student_edit[0][3])
-
-  Label(edit_frame, text="Gender:", font=('Helvetica', 15)).grid(row=5, column=0, padx=10)
-  gender_entry = Entry(edit_frame, font=('Helvetica', 15))
-  gender_entry.grid(row=5, column=1, padx=10, columnspan=2)
-  gender_entry.insert(0, student_edit[0][4])
-
-  Label(edit_frame, text="Program code:", font=('Helvetica', 15)).grid(row=6, column=0, padx=10)
-  pcode_entry = Entry(edit_frame, font=('Helvetica', 15))
-  pcode_entry.grid(row=6, column=1, padx=10, columnspan=2)
-  pcode_entry.insert(0, student_edit[0][5])
-
-  Label(edit_frame, text="Program", font=('Helvetica', 20)).grid(row=7, column=0, columnspan=3, padx=10, pady=10)
-  
-  Label(edit_frame, text="Program code:", font=('Helvetica', 15)).grid(row=8, column=0, padx=10)
-  progcode_entry = Entry(edit_frame, font=('Helvetica', 15))
-  progcode_entry.grid(row=8, column=1, padx=10, columnspan=2)
-  progcode_entry.insert(0, program_edit[0][0])
-
-  Label(edit_frame, text="Program name:", font=('Helvetica', 15)).grid(row=9, column=0, padx=10)
-  pname_entry = Entry(edit_frame, font=('Helvetica', 15))
-  pname_entry.grid(row=9, column=1, padx=10, columnspan=2)
-  pname_entry.insert(0, program_edit[0][1])
-
-  Label(edit_frame, text="College code:", font=('Helvetica', 15)).grid(row=10, column=0, padx=10)
-  ccode_entry = Entry(edit_frame, font=('Helvetica', 15))
-  ccode_entry.grid(row=10, column=1, padx=10, columnspan=2)
-  ccode_entry.insert(0, program_edit[0][2])
-
-  Label(edit_frame, text="College", font=('Helvetica', 20)).grid(row=11, column=0, columnspan=3, padx=10, pady=10)
-
-  Label(edit_frame, text="College code:", font=('Helvetica', 15)).grid(row=12, column=0, padx=10)
-  colcode_entry = Entry(edit_frame, font=('Helvetica', 15))
-  colcode_entry.grid(row=12, column=1, padx=10, columnspan=2)
-  colcode_entry.insert(0, college_edit[0][0])
-
-  Label(edit_frame, text="College name:", font=('Helvetica', 15)).grid(row=13, column=0, padx=10)
-  colname_entry = Entry(edit_frame, font=('Helvetica', 15))
-  colname_entry.grid(row=13, column=1, padx=10, columnspan=2)
-  colname_entry.insert(0, college_edit[0][1])
-
-  #Clear
-  student_edit.clear()
-  program_edit.clear()
-  college_edit.clear()
-
-  submit_button = Button(edit_frame, text="Submit", font=('Helvetica', 15), command=submit_edit)
-  submit_button.grid(row=14, column=0, columnspan=3, pady=10)
-
-  
+  Label(del_frame, text="Editing Student", font=('Helvetica', 20)).grid(row=0, column=0, columnspan=3, padx=10, pady=10)
+  Label(del_frame, text="Student ID#", font=('Helvetica', 15)).grid(row=1, column=0,pady=10)
+  editstudent = Entry(del_frame, font=("Helvetica", 15))
+  editstudent.insert(0, "YYYY-NNNN")
+  editstudent.grid(row=1, column=2)
+  editstudent.bind("<FocusIn>", clear_text)
+  edit_button = Button(del_frame, text="Edit Student", font=('Helvetica', 15), pady=10, padx=10, command=editing)
+  edit_button.grid(row=2, columnspan=3)
 
 #Checks if searched is on the list and updates the list
 def search(event):
@@ -616,12 +770,6 @@ sort_menu.add_command(label="Year Level", command=sort_year_level)
 sort_menu.add_command(label="Gender", command=sort_gender)
 sort_menu.add_command(label="College", command=sort_college)
 
-view_menu = Menu(menubar, tearoff=0, font=("Helvetica", 11))
-menubar.add_cascade(label="View", menu=view_menu)
-view_menu.add_command(label="Student")
-view_menu.add_command(label="Program")
-view_menu.add_command(label="College")
-
 #for search box
 search_frame = Frame(main_window)
 search_frame.pack(side=TOP, padx=20, pady=10)
@@ -670,5 +818,6 @@ show()
 
 search_box.bind("<KeyRelease>", search)
 
+main_window.resizable(FALSE,False)
 
 main_window.mainloop()
