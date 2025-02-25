@@ -1,6 +1,6 @@
 code,name,college_code
 BAELS,Literature,CASS
-BSCS,Computer Science,COE
+BSCS,Computer Science,CCS
 BSM,Mathematics,CSM
 BSA,Accountancy,CEBA
 BSN,Nursing,CHS
@@ -10,4 +10,4 @@ BSPolSci,Political Science,CASS
 BSPE,Physical Education,CED
 BAELS,Literature,CASS
 BSCS,Computer Science,CCS
-BSEE,Electrical Engineering,COE
+BSCE,Civil Engineering,COE
