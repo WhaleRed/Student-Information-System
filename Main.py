@@ -76,6 +76,7 @@ def sort_year_level():
   Label(sort_window,  text="Year level", font=("Helvetica", 12)).pack()
   choices = ["1", "2", "3", "4"]
   drop_year = ttk.Combobox(sort_window, text="None", values=choices, font=("Helvetica", 12), state="readonly")
+  drop_year.set("")
   drop_year.pack()
   submit = Button(sort_window, text="Sort", command=sub_year,font=("Helvetica", 12))
   submit.pack(pady=15)
@@ -120,6 +121,7 @@ def sort_gender():
   Label(sort_window,  text="Gender", font=("Helvetica", 12)).pack()
   choices = ["Female", "Male"]
   drop_gender = ttk.Combobox(sort_window, text="None", values=choices, font=("Helvetica", 12), state="readonly")
+  drop_gender.set("")
   drop_gender.pack()
   submit = Button(sort_window, text="Sort", command=sub_gender, font=("Helvetica", 12))
   submit.pack(pady=15)
@@ -174,6 +176,7 @@ def sort_college():
   Label(sort_window,  text="College", font=("Helvetica", 12)).pack()
   choices = ["CASS", "CCS", "CSM", "CEBA", "CED", "CHS", "COE"]
   drop_college = ttk.Combobox(sort_window, text="None", values=choices, font=("Helvetica", 12), state="readonly")
+  drop_college.set("")
   drop_college.pack()
   submit = Button(sort_window, text="Sort", command=sub_college, font=("Helvetica", 12))
   submit.pack(pady=15) 
