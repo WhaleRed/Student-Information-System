@@ -209,12 +209,33 @@ def show():
         row_num += 1
 
 def add_student():
+  def filled_in():
+    info = []
+    info.append(id_entry.get())
+    info.append(fname_entry.get())
+    info.append(lname_entry.get())
+    info.append(ylvl_entry.get())
+    info.append(gender_entry.get())
+    info.append(pcode_entry.get())
+    info.append(progcode_entry.get())
+    info.append(pname_entry.get())
+    info.append(ccode_entry.get())
+    info.append(colcode_entry.get())
+    info.append(colname_entry.get())
+
+    if "" in info:
+      return False
+    else:
+      return True
+
 
   def submit():
       if exists(id_entry.get()) == True:
         messagebox.showerror("Invalid ID Number", "ID Number already exists")
       elif valid_id(id_entry.get()) == False:
         messagebox.showerror("Invalid Format", "ID Number Invalid Format")
+      elif filled_in() == False:
+        messagebox.showerror("Field(s) is  not Filled", "All Fields must be filled in")
       else:
         #Adding row for Student CSV
         student_new.append(id_entry.get())
@@ -404,12 +425,32 @@ def delete_student():
 def edit_student():
 
   def editing():
+    def filled_in():
+      info = []
+      info.append(id_entry.get())
+      info.append(fname_entry.get())
+      info.append(lname_entry.get())
+      info.append(ylvl_entry.get())
+      info.append(gender_entry.get())
+      info.append(pcode_entry.get())
+      info.append(progcode_entry.get())
+      info.append(pname_entry.get())
+      info.append(ccode_entry.get())
+      info.append(colcode_entry.get())
+      info.append(colname_entry.get())
+
+      if "" in info:
+        return False
+      else:
+        return True
 
     def submit_edit():
       if valid_id(id_entry.get()) == False:
         messagebox.showerror("Invalid Format", "ID Number Invalid Format")
       elif exists(id_entry.get()) == True and id_entry.get() != student:
         messagebox.showerror("Invalid ID Number", "ID Number Already Exists")
+      elif filled_in() == False:
+        messagebox.showerror("Field(s) is not Filled", "All Fields must be filled in")
       else:
         student_e = []
         program_e = []
