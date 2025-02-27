@@ -742,7 +742,7 @@ def search(event):
     else:
       student = []
       for row in reader:
-        if searched in row[0]:
+        if searched in row[0] or searched in row[1] or searched in row[2]:    #Search for ID, First and Last Name
           student.append([row[0], row[1], row[2]])
           prog_col.append(count)
           count += 1
@@ -823,7 +823,7 @@ search_box = Entry(search_frame, font=('Helvetica', 15))
 search_box.pack(side=RIGHT)
 
 #Label for search box
-Label(search_frame, text="Search by ID#").pack(side=RIGHT)
+Label(search_frame, text="Search ").pack(side=RIGHT)
 
 #Listing students
 
