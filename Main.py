@@ -23,6 +23,11 @@ student_edit = []
 college_edit = []
 program_edit = []
 
+#For viewing student
+student_view = []
+college_view = []
+program_view = []
+
 def valid_id(idnumber):
   pattern = r"^\d{4}-\d{4}$"  
   return bool(re.match(pattern, idnumber))
@@ -544,6 +549,8 @@ def edit_student():
 
     if valid_id(editstudent.get()) == False:
       messagebox.showerror("Invalid Format", "Invalid ID Number Format")
+    elif exists(editstudent.get()) == False:
+      messagebox.showerror("ID Does Not Exist", "ID Number Does Not Exist")
     else: 
       student = editstudent.get()
       edit_window.destroy()
@@ -690,7 +697,7 @@ def edit_student():
     editstudent.delete(0, "end")
 
   edit_window = Toplevel()
-  edit_window.title("Delete Student")
+  edit_window.title("Edit Student")
   edit_window.resizable(FALSE,FALSE)
   del_frame = Frame(edit_window)
   del_frame.grid(row=0,column=0, pady=10, padx=10)
@@ -703,6 +710,142 @@ def edit_student():
   editstudent.bind("<FocusIn>", clear_text)
   edit_button = Button(del_frame, text="Edit Student", font=('Helvetica', 15), pady=10, padx=10, command=editing)
   edit_button.grid(row=2, columnspan=3)
+
+def view_student():
+
+  def viewing():
+    if valid_id(viewstudent.get()) == False:
+      messagebox.showerror("Invalid Format", "Invalid ID Number Format")
+    elif exists(viewstudent.get()) == False:
+      messagebox.showerror("ID Does Not Exist", "ID Number Does Not Exist")
+    else:
+      student = viewstudent.get()
+      view_window.destroy()
+
+      count = 0
+      editing = 0
+      #Read first
+      with open(student_path, "r") as f:
+        reader = csv.reader(f)
+        for row in reader:
+          if row[0] == student:
+            student_view.append(row)
+            editing = count
+          count += 1
+
+      count = 0
+
+      with open(program_path, "r") as f:
+        reader = csv.reader(f)
+        for row in reader:
+          if count == editing:
+            program_view.append(row)
+          count += 1
+      
+      count = 0
+
+      with open(college_path, "r") as f:
+        reader = csv.reader(f)
+        for row in reader:
+          if count == editing:
+            college_view.append(row)
+          count += 1
+      
+      count = 0
+
+      ######
+
+      viewing_window = Toplevel()
+      viewing_window.title("Viewing Student")
+      viewing_window.resizable(FALSE,FALSE)
+      view_frame = Frame(viewing_window)
+      view_frame.grid(row=0, column=0)
+
+      Label(view_frame, text="Student", font=('Helvetica', 20)).grid(row=0, column=0, columnspan=3, padx=10, pady=10)
+      
+      Label(view_frame, text="ID#:", font=('Helvetica', 15)).grid(row=1, column=0, padx=10)
+      id_entry = Entry(view_frame, font=('Helvetica', 15), width=40)
+      id_entry.grid(row=1, column=1, padx=10, columnspan=2, pady=5)
+      id_entry.insert(0, student_view[0][0])
+
+      Label(view_frame, text="First name:", font=('Helvetica', 15)).grid(row=2, column=0, padx=10)
+      fname_entry = Entry(view_frame, font=('Helvetica', 15), width=40)
+      fname_entry.grid(row=2, column=1, padx=10, columnspan=2, pady=5)
+      fname_entry.insert(0, student_view[0][1])
+
+      Label(view_frame, text="Last name:", font=('Helvetica', 15)).grid(row=3, column=0, padx=10)
+      lname_entry = Entry(view_frame, font=('Helvetica', 15), width=40)
+      lname_entry.grid(row=3, column=1, padx=10, columnspan=2, pady=5)
+      lname_entry.insert(0, student_view[0][2])
+
+      Label(view_frame, text="Year level:", font=('Helvetica', 15)).grid(row=4, column=0, padx=10)
+      ylvl_entry = Entry(view_frame, font=('Helvetica', 15), width=40)
+      ylvl_entry.insert(0,student_view[0][3])
+      ylvl_entry.grid(row=4, column=1, padx=10, columnspan=2, pady=5)
+
+      Label(view_frame, text="Gender:", font=('Helvetica', 15)).grid(row=5, column=0, padx=10)
+      gender_entry = Entry(view_frame, font=('Helvetica', 15), width=40)
+      gender_entry.insert(0,student_view[0][4])
+      gender_entry.grid(row=5, column=1, padx=10, columnspan=2,pady=5)
+
+      Label(view_frame, text="Program code:", font=('Helvetica', 15)).grid(row=6, column=0, padx=10)
+      pcode_entry = Entry(view_frame, font=('Helvetica', 15),width=40)
+      pcode_entry.grid(row=6, column=1, padx=10, columnspan=2,pady=5)
+      pcode_entry.insert(0, student_view[0][5])
+
+      Label(view_frame, text="Program", font=('Helvetica', 20)).grid(row=7, column=0, columnspan=3, padx=10, pady=10)
+      
+      Label(view_frame, text="Program code:", font=('Helvetica', 15)).grid(row=8, column=0, padx=10)
+      progcode_entry = Entry(view_frame, font=('Helvetica', 15), width=40)
+      progcode_entry.grid(row=8, column=1, padx=10, columnspan=2,pady=5)
+      progcode_entry.insert(0, program_view[0][0])
+
+      Label(view_frame, text="Program name:", font=('Helvetica', 15)).grid(row=9, column=0, padx=10)
+      pname_entry = Entry(view_frame, font=('Helvetica', 15), width=40)
+      pname_entry.grid(row=9, column=1, padx=10, columnspan=2,pady=5)
+      pname_entry.insert(0, program_view[0][1])
+
+      Label(view_frame, text="College code:", font=('Helvetica', 15)).grid(row=10, column=0, padx=10)
+      ccode_entry = Entry(view_frame, font=('Helvetica', 15), width=40)
+      ccode_entry.insert(0, program_view[0][2])
+      ccode_entry.grid(row=10, column=1, padx=10, columnspan=2,pady=5)
+
+      Label(view_frame, text="College", font=('Helvetica', 20)).grid(row=11, column=0, columnspan=3, padx=10, pady=10)
+
+      Label(view_frame, text="College code:", font=('Helvetica', 15)).grid(row=12, column=0, padx=10)
+      colcode_entry = Entry(view_frame, font=('Helvetica', 15), width = 40)
+      colcode_entry.insert(0,college_view[0][0])
+      colcode_entry.grid(row=12, column=1, padx=10, columnspan=2, pady=5)
+
+      Label(view_frame, text="College name:", font=('Helvetica', 15)).grid(row=13, column=0, padx=10)
+      colname_entry = Entry(view_frame, font=('Helvetica', 15), width = 40)
+      colname_entry.insert(0,college_view[0][1])
+      colname_entry.grid(row=13, column=1, padx=10, columnspan=2, pady=5)
+
+      #Clear
+      student_view.clear()
+      program_view.clear()
+      college_view.clear()
+
+  def clear_text(e):
+    viewstudent.delete(0, "end")
+
+  view_window = Toplevel()
+  view_window.title("View Student")
+  view_window.resizable(FALSE,FALSE)
+  del_frame = Frame(view_window)
+  del_frame.grid(row=0,column=0, pady=10, padx=10)
+
+  Label(del_frame, text="View Student", font=('Helvetica', 20)).grid(row=0, column=0, columnspan=3, padx=10, pady=10)
+  Label(del_frame, text="Student ID#", font=('Helvetica', 15)).grid(row=1, column=0,pady=10)
+  viewstudent = Entry(del_frame, font=("Helvetica", 15))
+  viewstudent.insert(0, "YYYY-NNNN")
+  viewstudent.grid(row=1, column=2)
+  viewstudent.bind("<FocusIn>", clear_text)
+  view_button = Button(del_frame, text="View Student", font=('Helvetica', 15), pady=10, padx=10, command=viewing)
+  view_button.grid(row=2, columnspan=3)
+
+
 
 #Checks if searched is on the list and updates the list
 def search(event):
@@ -805,7 +948,8 @@ manage_menu = Menu(menubar, tearoff=0, font=("Helvetica", 11))
 menubar.add_cascade(label="Manage Student", menu=manage_menu)
 manage_menu.add_command(label="Add Student", command=add_student)
 manage_menu.add_command(label="Delete Student", command=delete_student)
-manage_menu.add_command(label="Edit Student", command=edit_student)     #Have to make function
+manage_menu.add_command(label="Edit Student", command=edit_student)     
+manage_menu.add_command(label="View Student", command=view_student)
 
 sort_menu = Menu(menubar, tearoff=0, font=("Helvetica", 11))
 menubar.add_cascade(label="Sort Students", menu=sort_menu)
