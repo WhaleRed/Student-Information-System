@@ -1,13 +1,7 @@
 code,name,college_code
-BAELS,Bachelor of Arts in English Literature,CASS
 BSCS,Bachelor of Science in Computer Science,CCS
-BSM,Bachelor of Science in Mathematics,CSM
-BSA,Bachelor of Science in Accountancy,CEBA
 BSN,Bachelor of Science in Nursing,CHS
-BAELS,Bachelor of Arts in English Literature,CASS
-BSCE,bachelor of Science in Civil Engineering,COE
-BSPolSci,Bachelor of Science in Political Science,CASS
-BSPE,Bachelor of Science in Physical Education,CED
-BAELS,Bachelor of Arts in English Literature,CASS
-BSCS,bachelor of Science in Computer Science,CCS
-BSCS,Bachelor of Science in Computer Science,CCS
+BSCE,Bachelor of Science in Civil Engineering,COE
+BSIS,Bachelor of Science in Information Systems,CCS
+BSIT,Bachelor of Science in Information Technology,CCS
+BSHM,Bachelor of Science in Hospitality Management,CEBA

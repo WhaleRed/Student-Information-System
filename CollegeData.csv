@@ -1,13 +1,8 @@
 code,name
-CASS,College of Arts and Social Science
-CCS,College of Computer Studies
-CSM,College of Science and Mathematics
-CEBA,College of Economics and Bussiness Administration
-CHS,College of Health and Science
-CASS,College of Arts and Social Science
-CSM,College of Science and Mathematics
-CASS,College of Arts and Social Sciences
-CED,College of Education
-CASS,College of Arts and Social Science
-CCS,College of Computer Studies
-CCS,College of Computer Studies
+CASS, College of Arts and Social Sciences
+CCS, College of Computer Studies
+CED, College of Education
+CHS, College of Health Sciences
+CSM, Collge of Science and Mathematics
+COE, College of Engineering
+CEBA, College of Economics and Business Administration
