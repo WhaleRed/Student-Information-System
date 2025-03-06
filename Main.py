@@ -35,6 +35,15 @@ def exists(idnumber):
       idnums.append(row[0])
   return bool(idnumber in idnums)
 
+def program_exists(code):
+   programs = []
+   with open(program_path, "r") as f:
+      reader = csv.reader(f)
+      for row in reader:
+         programs.append(row[0])
+
+   return bool(code in programs)
+
 #Student
 def sync_scroll_student(*args):
     id_list.yview(*args)
@@ -67,6 +76,8 @@ def add_student():
         messagebox.showerror("Invalid Format", "ID Number Invalid Format")
       elif filled_in() == False:
         messagebox.showerror("Field(s) is  not Filled", "All Fields must be filled in")
+      elif program_exists(pcode_entry.get()) == False:
+         messagebox.showerror("Program does not Exist", "Assigning a student to a nonexistent program")
       else:
         #Adding row for Student CSV
         student_new.append(id_entry.get())
@@ -123,6 +134,11 @@ def add_student():
 
 def delete_student():
 
+   def confirm():
+
+      if messagebox.askyesno("Deleting", "Are you sure about this deletion?"):
+         deleting()
+
    def deleting():
       if valid_id(delstudent.get()) == False:
          messagebox.showerror("Invalid Format", "Invalid ID Number Format")
@@ -161,11 +177,16 @@ def delete_student():
    delstudent.insert(0, "YYYY-NNNN")
    delstudent.grid(row=1, column=2)
    delstudent.bind("<FocusIn>", clear_text)
-   delete_button = Button(del_frame, text="Delete Student", font=('Helvetica', 15), pady=10, padx=10, command=deleting)
+   delete_button = Button(del_frame, text="Delete Student", font=('Helvetica', 15), pady=10, padx=10, command=confirm)
    delete_button.grid(row=2, columnspan=3)
 
 def edit_student():
+
    def editing():
+
+      def confirm():
+         if messagebox.askyesno("Deleting", "Are you sure about this Modification?"):
+            submit_edit()
 
       def filled_in():
          info = []
@@ -188,6 +209,8 @@ def edit_student():
             messagebox.showerror("Invalid ID Number", "ID Number Already Exists")
          elif  filled_in() == False:
             messagebox.showerror("Field(s) is not Filled", "All Fields must be filled in")
+         elif program_exists(pcode_entry.get()) == False:
+            messagebox.showerror("Program does not Exist", "Assigning a student to a nonexistent program")
          else:
             student_e = []
 
@@ -286,7 +309,7 @@ def edit_student():
          
          student_edit.clear() #Clear
 
-         submit_button = Button(edit_frame, text="Submit", font=('Helvetica', 15), command=submit_edit)
+         submit_button = Button(edit_frame, text="Submit", font=('Helvetica', 15), command=confirm)
          submit_button.grid(row=14, column=0, columnspan=3, pady=10)
 
    def clear_text(e):
@@ -595,6 +618,7 @@ def show_colleges():
       else:
          return False
 
+   
    def show_college():
       college_code_list.delete(0,END)
       college_name_list.delete(0,END)
@@ -652,7 +676,11 @@ def show_colleges():
       submit_button = Button(add_frame, text="Add College", font=('Helvetica', 15), command=submit)
       submit_button.grid(row=14, column=0, columnspan=3, pady=10)
 
-   def delete_college():
+   def delete_college():   
+
+      def confirm():
+         if messagebox.askyesno("Deleting", "Are you sure about this Deletion?"):
+            deleting()
 
       def deleting():
          if delcol.get() == "":
@@ -687,12 +715,16 @@ def show_colleges():
       Label(del_frame, text="Student ID#", font=('Helvetica', 15)).grid(row=1, column=0,pady=10)
       delcol = Entry(del_frame, font=("Helvetica", 15))
       delcol.grid(row=1, column=2)
-      delete_button = Button(del_frame, text="Delete College", font=('Helvetica', 15), pady=10, padx=10, command=deleting)
+      delete_button = Button(del_frame, text="Delete College", font=('Helvetica', 15), pady=10, padx=10, command=confirm)
       delete_button.grid(row=2, columnspan=3)
 
    def edit_college(): 
 
       def editing():
+
+         def confirm():
+            if messagebox.askyesno("Deleting", "Are you sure about this Modification?"):
+               submit()
 
          def submit():
             if code_entry.get() == "" or cname_entry.get() == "":
@@ -755,7 +787,7 @@ def show_colleges():
             cname_entry.grid(row=2, column=1, padx=10, columnspan=2, pady=5)
             cname_entry.insert(0, college_edit[0][1])
 
-            submit_button = Button(edit_frame, text="Submit", font=('Helvetica', 15), pady=10, padx=10, command=submit)
+            submit_button = Button(edit_frame, text="Submit", font=('Helvetica', 15), pady=10, padx=10, command=confirm)
             submit_button.grid(row=3, columnspan=3)
 
          
@@ -915,6 +947,7 @@ def show_colleges():
 #program
 def show_programs():
 
+   #Checl
    def prog_exists(code):
       pcode = []
       with open(program_path, "r") as f:
@@ -938,6 +971,15 @@ def show_programs():
          return True
       else:
          return False
+   
+   def college_exists(code):
+      colleges = []
+      with open(college_path, "r") as f:
+         reader = csv.reader(f)
+         for row in reader:
+            colleges.append(row[0])
+
+      return bool(code in colleges)
    
    def add_program():
       def prog_exists(progcode,progname):
@@ -971,6 +1013,8 @@ def show_programs():
             messagebox.showerror("Fields must be filled", "Fields must be filled")
          elif prog_exists(code_entry.get(),pname_entry.get()) == True:
             messagebox.showerror("Program already exists", "Program Already exists")
+         elif college_exists(ccode_entry.get()) == False:
+            messagebox.showerror("College does not Exist","Assigning a program to a nonexistent College")
          else:
             program_new.append(code_entry.get())
             program_new.append(pname_entry.get())
@@ -1006,7 +1050,7 @@ def show_programs():
       ccode_entry = Entry(add_frame, font=('Helvetica', 15),width=40)
       ccode_entry.grid(row=3, column=1, padx=10, pady=5, columnspan=2)
 
-      submit_button = Button(add_frame, text="Add Student", font=('Helvetica', 15),command=submit)
+      submit_button = Button(add_frame, text="Add Program", font=('Helvetica', 15),command=submit)
       submit_button.grid(row=14, column=0, columnspan=3, pady=10)
       
    def used(code):
@@ -1021,6 +1065,10 @@ def show_programs():
          return False
       
    def delete_program():
+
+      def confirm():
+         if messagebox.askyesno("Deleting", "Are you sure about this Modification?"):
+            deleting()
 
       def deleting():
          if delprogram.get() == "":
@@ -1056,18 +1104,24 @@ def show_programs():
       Label(del_frame, text="Program Code: ", font=('Helvetica', 15)).grid(row=1, column=0,pady=10)
       delprogram = Entry(del_frame, font=("Helvetica", 15))
       delprogram.grid(row=1, column=2)
-      delete_button = Button(del_frame, text="Delete Program", font=('Helvetica', 15), pady=10, padx=10, command=deleting)
+      delete_button = Button(del_frame, text="Delete Program", font=('Helvetica', 15), pady=10, padx=10, command=confirm)
       delete_button.grid(row=2, columnspan=3)
 
    def edit_program():
 
       def editing():
 
+         def confirm():
+            if messagebox.askyesno("Deleting", "Are you sure about this Modification?"):
+               submit()
+
          def submit(): 
             if code_entry.get() == "" or pname_entry.get() == "" or ccode_entry.get() == "":
                messagebox.showerror("Fields must be Filled", "Fields must be filled")
             elif prog_codename_exists(code_entry.get(), pname_entry.get()) == True and code_entry.get() != program:
                messagebox.showerror("College Already Exists", "College Already Exists")
+            elif college_exists(ccode_entry.get()) == False:
+               messagebox.showerror("College does not Exist","Assigning a program to a nonexistent College")
             else:
                program_e = []
                program_e.append(code_entry.get())
@@ -1129,7 +1183,7 @@ def show_programs():
             ccode_entry.grid(row=3, column=1, padx=10, columnspan=2, pady=5)
             ccode_entry.insert(0, program_edit[0][2])
 
-            submit_button = Button(edit_frame, text="Submit", font=('Helvetica', 15), pady=10, padx=10, command=submit)
+            submit_button = Button(edit_frame, text="Submit", font=('Helvetica', 15), pady=10, padx=10, command=confirm)
             submit_button.grid(row=4, columnspan=3)
 
       edit_window = Toplevel()
