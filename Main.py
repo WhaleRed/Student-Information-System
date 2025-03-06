@@ -1119,7 +1119,7 @@ def show_programs():
             if code_entry.get() == "" or pname_entry.get() == "" or ccode_entry.get() == "":
                messagebox.showerror("Fields must be Filled", "Fields must be filled")
             elif prog_codename_exists(code_entry.get(), pname_entry.get()) == True and code_entry.get() != program:
-               messagebox.showerror("College Already Exists", "College Already Exists")
+               messagebox.showerror("Program Already Exists", "Program Already Exists")
             elif college_exists(ccode_entry.get()) == False:
                messagebox.showerror("College does not Exist","Assigning a program to a nonexistent College")
             else:
