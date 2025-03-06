@@ -185,7 +185,7 @@ def edit_student():
    def editing():
 
       def confirm():
-         if messagebox.askyesno("Deleting", "Are you sure about this Modification?"):
+         if messagebox.askyesno("Editing", "Are you sure about this Modification?"):
             submit_edit()
 
       def filled_in():
@@ -723,7 +723,7 @@ def show_colleges():
       def editing():
 
          def confirm():
-            if messagebox.askyesno("Deleting", "Are you sure about this Modification?"):
+            if messagebox.askyesno("Editing", "Are you sure about this Modification?"):
                submit()
 
          def submit():
@@ -1112,7 +1112,7 @@ def show_programs():
       def editing():
 
          def confirm():
-            if messagebox.askyesno("Deleting", "Are you sure about this Modification?"):
+            if messagebox.askyesno("Editing", "Are you sure about this Modification?"):
                submit()
 
          def submit(): 
